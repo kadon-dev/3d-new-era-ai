@@ -34,6 +34,40 @@ pub(super) fn translation(pt: &str) -> Option<&'static str> {
         "Embutido:" => "Eingebaut:",
         "Armários na parede" => "Schränke entlang der Wand",
         "Armários na parede…" => "Schränke entlang der Wand …",
+        "Lista de corte…" => "Zuschnittliste …",
+        "Lista de corte" => "Zuschnittliste",
+        "Nenhuma marcenaria neste pavimento: crie armários (Planta → Armários na parede…) ou desenhe um grupo com chapas." => {
+            "Keine Schreinerarbeiten in diesem Geschoss: Schränke anlegen (Grundriss → Schränke entlang der Wand …) oder eine Gruppe aus Platten zeichnen."
+        }
+        "{} peça de marcenaria|{} peças de marcenaria" => {
+            "{} Schreinerarbeit|{} Schreinerarbeiten"
+        }
+        "{} grupo desenhado|{} grupos desenhados" => "{} gezeichnete Gruppe|{} gezeichnete Gruppen",
+        "{} e {}." => "{} und {}.",
+        "Salvar como" => "Speichern als",
+        "CSV: a tabela para a planilha ou o serviço de corte. DXF e SVG: as peças dispostas nas chapas, para a seccionadora ou o CNC." => {
+            "CSV: die Tabelle für eine Tabellenkalkulation oder einen Zuschnittservice. DXF und SVG: die Teile auf den Platten angeordnet, für die Formatkreissäge oder die CNC."
+        }
+        "Chapa da marcenaria" => "Platte der Werkstatt",
+        "Serra" => "Sägeschnitt",
+        "Refilo por lado" => "Besäumung je Seite",
+        "{}: {}" => "{}: {}",
+        "{} peça|{} peças" => "{} Teil|{} Teile",
+        "{} chapa|{} chapas" => "{} Platte|{} Platten",
+        "Maior que a chapa, prever emenda ou chapa maior: {}" => {
+            "Größer als die Platte, Stoß oder größere Platte vorsehen: {}"
+        }
+        "Nome da peça" => "Teil",
+        "Qtd" => "Anz.",
+        "Comprimento × largura" => "Länge × Breite",
+        "Fita" => "Kantenumleimer",
+        "Ferragens" => "Beschläge",
+        "Fora da lista, não é chapa: {}" => "Nicht in der Liste, keine Platte: {}",
+        "Lista de corte salva em {}" => "Zuschnittliste gespeichert unter {}",
+        "Chapa da caixa" => "Korpusplatte",
+        "Chapa das frentes" => "Frontplatte",
+        "a mesma da caixa" => "wie der Korpus",
+        "Portas basculantes (abrem para cima)" => "Klappen (öffnen nach oben)",
         "Balcões" => "Unterschränke",
         "Aéreos" => "Oberschränke",
         "Entre a norma e a lei do município, prevalece o mais restritivo." => {

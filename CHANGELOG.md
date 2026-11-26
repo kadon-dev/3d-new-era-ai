@@ -8,6 +8,20 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- Fronts are cut from their own board: a cabinet takes `board` (the carcass: `MDP` for
+  particleboard, `MDF` by default), `front_board` and `front_t` mm (the doors, drawer fronts and
+  blind panels), and `cabinet_run` gives the same to its cabinets and to the filler panels among
+  the fronts, keeping them when a wall is filled again. The cut list then lists and lays out each
+  board on its own sheets: MDF 19 fronts apart from an MDP 18 carcass. "Armários na parede…"
+  chooses them too, and offers the next wall the boards of the last one.
+- "Armários na parede…" hangs lift-up flaps on a wall row ("Portas basculantes"), as
+  `cabinet_run` does with `p.lift`.
+- "Lista de corte…" in the editor (Planta menu): the desktop app cuts its own kitchen. It lists
+  the boards of the storey's joinery (the cabinets made with "Armários na parede…", and groups
+  drawn by hand with board parts) by material, with the sheets each takes, the edge banding and
+  the hardware, and saves it as CSV, or as DXF or SVG with the boards laid out on sheets. The
+  workshop's sheet size, saw kerf and trim are set in the window. The storey's list is gathered
+  by one function, `newera_joinery::gather`, that the `cut_list` tool reads as well.
 - The cut list lays boards out on the workshop's own sheets: `sheets` gives `[length, width]` mm
   by the start of the board name (`{"*": [2800, 2070]}` for 2800 × 2070 mm chipboard, `{"MDF 6":
   [2440, 1220]}` for one board only, the longest match wins), `kerf` the saw blade (default 4 mm)

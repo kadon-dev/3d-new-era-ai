@@ -240,6 +240,32 @@ pub(crate) fn fill(pt: &'static str, parts: &[&dyn std::fmt::Display]) -> String
     fill_in(pt, lang(), parts)
 }
 
+/// A count with its noun, `one|many` in the key: `count_of("{} peça|{} peças", 1)`
+/// says "1 peça". French counts 0 and 1 as one, the others 1 alone; a
+/// Ukrainian translation gives three forms, `one|few|many`, as [`count`] does.
+pub(crate) fn count_of(pt: &'static str, n: u64) -> String {
+    count_of_in(pt, lang(), n)
+}
+
+/// [`count_of`] in one named language. See [`say`].
+fn count_of_in(pt: &'static str, lang: Lang, n: u64) -> String {
+    let forms: Vec<&str> = say(pt, lang).split('|').collect();
+    let form = match forms.as_slice() {
+        [one, few, many] if lang == Lang::Uk => match (n % 10, n % 100) {
+            (1, tens) if tens != 11 => one,
+            (2..=4, tens) if !(12..=14).contains(&tens) => few,
+            _ => many,
+        },
+        [one, many, ..] => {
+            let single = if lang == Lang::Fr { n < 2 } else { n == 1 };
+            if single { one } else { many }
+        }
+        [only] => only,
+        [] => &pt,
+    };
+    form.replacen("{}", &n.to_string(), 1)
+}
+
 /// [`fill`] in one named language. See [`say`].
 fn fill_in(pt: &'static str, lang: Lang, parts: &[&dyn std::fmt::Display]) -> String {
     let mut text = String::new();
@@ -438,6 +464,126 @@ fn translations(pt: &str) -> Option<[&'static str; 4]> {
             "Muebles altos",
             "Meubles hauts",
             "Верхні шафи",
+        ],
+        "Lista de corte…" => [
+            "Cut list…",
+            "Lista de corte…",
+            "Liste de débit…",
+            "Карта розкрою…",
+        ],
+        "Lista de corte" => [
+            "Cut list",
+            "Lista de corte",
+            "Liste de débit",
+            "Карта розкрою",
+        ],
+        "Nenhuma marcenaria neste pavimento: crie armários (Planta → Armários na parede…) ou desenhe um grupo com chapas." => {
+            [
+                "No joinery on this storey: make cabinets (Plan → Cabinets on the wall…) or draw a group of boards.",
+                "No hay carpintería en esta planta: crea armarios (Plano → Armarios en la pared…) o dibuja un grupo de tableros.",
+                "Aucune menuiserie à ce niveau : créez des meubles (Plan → Meubles sur le mur…) ou dessinez un groupe de panneaux.",
+                "На цьому поверсі немає столярних виробів: створіть шафи (План → Шафи вздовж стіни…) або намалюйте групу з плит.",
+            ]
+        }
+        "{} peça de marcenaria|{} peças de marcenaria" => [
+            "{} joinery build|{} joinery builds",
+            "{} pieza de carpintería|{} piezas de carpintería",
+            "{} ouvrage de menuiserie|{} ouvrages de menuiserie",
+            "{} столярний виріб|{} столярні вироби|{} столярних виробів",
+        ],
+        "{} grupo desenhado|{} grupos desenhados" => [
+            "{} drawn group|{} drawn groups",
+            "{} grupo dibujado|{} grupos dibujados",
+            "{} groupe dessiné|{} groupes dessinés",
+            "{} намальована група|{} намальовані групи|{} намальованих груп",
+        ],
+        "{} e {}." => ["{} and {}.", "{} y {}.", "{} et {}.", "{} і {}."],
+        "Salvar como" => ["Save as", "Guardar como", "Enregistrer en", "Зберегти як"],
+        "CSV: a tabela para a planilha ou o serviço de corte. DXF e SVG: as peças dispostas nas chapas, para a seccionadora ou o CNC." => {
+            [
+                "CSV: the table for a spreadsheet or a cutting service. DXF and SVG: the boards laid out on sheets, for the panel saw or the CNC.",
+                "CSV: la tabla para la hoja de cálculo o el servicio de corte. DXF y SVG: las piezas dispuestas en los tableros, para la seccionadora o el CNC.",
+                "CSV : le tableau pour le tableur ou le service de découpe. DXF et SVG : les pièces placées sur les panneaux, pour la scie à panneaux ou la CNC.",
+                "CSV: таблиця для електронної таблиці або сервісу розкрою. DXF і SVG: деталі, розкладені на плитах, для форматно-розкрійного верстата або ЧПК.",
+            ]
+        }
+        "Chapa da marcenaria" => [
+            "Workshop sheet",
+            "Tablero del taller",
+            "Panneau de l'atelier",
+            "Плита майстерні",
+        ],
+        "Serra" => ["Saw kerf", "Corte de sierra", "Trait de scie", "Пропил"],
+        "Refilo por lado" => [
+            "Trim per side",
+            "Recorte por lado",
+            "Délignage par côté",
+            "Обрізка з кожного боку",
+        ],
+        "{}: {}" => ["{}: {}", "{}: {}", "{} : {}", "{}: {}"],
+        "{} peça|{} peças" => [
+            "{} piece|{} pieces",
+            "{} pieza|{} piezas",
+            "{} pièce|{} pièces",
+            "{} деталь|{} деталі|{} деталей",
+        ],
+        "{} chapa|{} chapas" => [
+            "{} sheet|{} sheets",
+            "{} tablero|{} tableros",
+            "{} panneau|{} panneaux",
+            "{} плита|{} плити|{} плит",
+        ],
+        "Maior que a chapa, prever emenda ou chapa maior: {}" => [
+            "Larger than the sheet, plan a splice or a bigger sheet: {}",
+            "Más grande que el tablero, prever un empalme o un tablero mayor: {}",
+            "Plus grand que le panneau, prévoir une jonction ou un panneau plus grand : {}",
+            "Більше за плиту, передбачте стик або більшу плиту: {}",
+        ],
+        "Nome da peça" => ["Part", "Pieza", "Pièce", "Деталь"],
+        "Qtd" => ["Qty", "Cant.", "Qté", "К-сть"],
+        "Comprimento × largura" => [
+            "Length × width",
+            "Largo × ancho",
+            "Longueur × largeur",
+            "Довжина × ширина",
+        ],
+        "Fita" => ["Edge banding", "Canto", "Chant", "Крайка"],
+        "Ferragens" => ["Hardware", "Herrajes", "Quincaillerie", "Фурнітура"],
+        "Fora da lista, não é chapa: {}" => [
+            "Left out, not a board: {}",
+            "Fuera de la lista, no es tablero: {}",
+            "Hors liste, pas un panneau : {}",
+            "Поза списком, не плита: {}",
+        ],
+        "Lista de corte salva em {}" => [
+            "Cut list saved to {}",
+            "Lista de corte guardada en {}",
+            "Liste de débit enregistrée dans {}",
+            "Карту розкрою збережено в {}",
+        ],
+        "Chapa da caixa" => [
+            "Carcass board",
+            "Tablero del casco",
+            "Panneau du caisson",
+            "Плита корпусу",
+        ],
+        "Chapa das frentes" => [
+            "Front board",
+            "Tablero de frentes",
+            "Panneau des façades",
+            "Плита фасадів",
+        ],
+        "a mesma da caixa" => [
+            "same as carcass",
+            "el mismo del casco",
+            "comme le caisson",
+            "та сама, що й корпус",
+        ],
+        "Portas basculantes (abrem para cima)" => [
+            "Lift-up flaps (open upwards)",
+            "Puertas abatibles (abren hacia arriba)",
+            "Portes relevables (s'ouvrent vers le haut)",
+            "Підйомні дверцята (відкриваються вгору)",
         ],
         "Entre a norma e a lei do município, prevalece o mais restritivo." => [
             "Between the standard and the city's law, the more restrictive one wins.",
@@ -3387,7 +3533,7 @@ mod tests {
         sources(std::path::Path::new("src"), &mut code);
         // A literal handed to tr, whatever the wrapping and the trailing comma.
         let mut missing: Vec<String> = Vec::new();
-        for needle in ["tr(", "fill("] {
+        for needle in ["tr(", "fill(", "count_of("] {
             missing.extend(untranslated(&code, needle));
         }
         assert!(missing.is_empty(), "not translated: {missing:#?}");
@@ -3423,13 +3569,17 @@ mod tests {
                 }
                 // A blank side is worse than no row: the label disappears.
                 // A side without the `{}` of the key drops what goes in it.
-                let places = text.matches("{}").count();
+                // A count's key is `one|many` and Ukrainian gives three forms:
+                // each form carries the `{}` one form of the key does.
+                let places = text.split('|').next().unwrap_or(text).matches("{}").count();
                 if Lang::ALL
                     .into_iter()
                     .filter(|&lang| lang != Lang::Pt)
                     .any(|lang| {
                         translated(text, lang).is_none_or(|t| {
-                            t.trim().is_empty() || t.matches("{}").count() != places
+                            t.trim().is_empty()
+                                || t.split('|')
+                                    .any(|form| form.matches("{}").count() != places)
                         })
                     })
                 {
@@ -3590,6 +3740,23 @@ mod tests {
         assert_eq!(Lang::from_locale("de-CH"), Some(Lang::De));
         assert_eq!(Lang::from_locale("C"), None);
         assert_eq!(Lang::from_locale(""), None);
+    }
+
+    /// One of a thing is said in the singular, and French says 0 that way too.
+    #[test]
+    fn counts_say_one_thing_in_the_singular() {
+        let key = "{} peça|{} peças";
+        assert_eq!(count_of_in(key, Lang::Pt, 1), "1 peça");
+        assert_eq!(count_of_in(key, Lang::Pt, 0), "0 peças");
+        assert_eq!(count_of_in(key, Lang::Pt, 12), "12 peças");
+        assert_eq!(count_of_in(key, Lang::En, 1), "1 piece");
+        assert_eq!(count_of_in(key, Lang::Fr, 0), "0 pièce");
+        assert_eq!(count_of_in(key, Lang::Es, 2), "2 piezas");
+        assert_eq!(count_of_in(key, Lang::Uk, 1), "1 деталь");
+        assert_eq!(count_of_in(key, Lang::Uk, 3), "3 деталі");
+        assert_eq!(count_of_in(key, Lang::Uk, 11), "11 деталей");
+        assert_eq!(count_of_in(key, Lang::De, 1), "1 Teil");
+        assert_eq!(count_of_in(key, Lang::De, 2), "2 Teile");
     }
 
     #[test]
